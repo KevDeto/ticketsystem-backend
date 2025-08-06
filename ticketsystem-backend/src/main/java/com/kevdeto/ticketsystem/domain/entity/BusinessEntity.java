@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.kevdeto.ticketsystem.auth.domain.UserEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
