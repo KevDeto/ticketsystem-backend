@@ -2,6 +2,7 @@ package com.kevdeto.ticketsystem.domain.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import com.kevdeto.ticketsystem.domain.dto.request.ProductRequestDTO;
 import com.kevdeto.ticketsystem.domain.dto.response.ProductResponseDTO;
@@ -10,18 +11,23 @@ import com.kevdeto.ticketsystem.domain.entity.ProductEntity;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
-	@Mapping(source = "business.id", target = "businessId")
+	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "business", source = "businessId")
+	ProductEntity toEntity(ProductRequestDTO dto);
+
+	@Mapping(target = "businessId", source = "business.id")
 	ProductResponseDTO toResponse(ProductEntity entity);
 
 	@Mapping(target = "id", ignore = true)
-	@Mapping(source = "businessId", target = "business")
-	ProductEntity toEntity(ProductRequestDTO dto);
+	@Mapping(target = "business", source = "businessId")
+	void updateEntityFromRequest(ProductRequestDTO dto, @MappingTarget ProductEntity entity);
 
-	default BusinessEntity mapBusinessIdToBusiness(Long businessId) {
-		if (businessId == null)
+	// Esto me mapea de un ID de business a una entidad business
+	default BusinessEntity businessFromId(Long id) {
+		if (id == null)
 			return null;
 		BusinessEntity business = new BusinessEntity();
-		business.setId(businessId);
+		business.setId(id);
 		return business;
 	}
 }
