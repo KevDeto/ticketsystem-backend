@@ -5,7 +5,6 @@ import java.util.List;
 
 public record TicketRequestDTO(
 	    LocalDateTime issueDate,
-	    Double total,
 	    Long businessId,
 	    List<TicketItemRequestDTO> items
 	) {}
