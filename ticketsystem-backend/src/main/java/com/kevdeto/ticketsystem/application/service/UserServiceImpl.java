@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kevdeto.ticketsystem.application.usecase.UserUseCase;
-import com.kevdeto.ticketsystem.auth.domain.UserEntity;
+import com.kevdeto.ticketsystem.auth.domain.model.UserEntity;
 import com.kevdeto.ticketsystem.auth.domain.repository.UserRepository;
 import com.kevdeto.ticketsystem.domain.dto.request.UserRequestDTO;
 import com.kevdeto.ticketsystem.domain.dto.response.UserResponseDTO;
