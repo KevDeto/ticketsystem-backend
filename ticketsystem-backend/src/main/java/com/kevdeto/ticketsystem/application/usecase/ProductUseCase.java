@@ -3,6 +3,7 @@ package com.kevdeto.ticketsystem.application.usecase;
 import java.util.List;
 
 import com.kevdeto.ticketsystem.domain.dto.request.ProductRequestDTO;
+import com.kevdeto.ticketsystem.domain.dto.response.PaginatedResponseDTO;
 import com.kevdeto.ticketsystem.domain.dto.response.ProductResponseDTO;
 
 public interface ProductUseCase {
@@ -15,4 +16,6 @@ public interface ProductUseCase {
 	ProductResponseDTO getById(Long id);
 
 	List<ProductResponseDTO> getAll();
+
+	PaginatedResponseDTO<ProductResponseDTO> getByBusinessId(Long id, int page, int size);
 }
