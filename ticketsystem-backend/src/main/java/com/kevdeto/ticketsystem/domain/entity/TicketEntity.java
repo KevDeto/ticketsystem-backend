@@ -1,5 +1,6 @@
 package com.kevdeto.ticketsystem.domain.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class TicketEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
     private LocalDateTime issueDate;
-    private Double total;
+    private BigDecimal total;
 
     @ManyToOne
     @JoinColumn(name = "business_id")
