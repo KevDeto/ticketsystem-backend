@@ -14,6 +14,7 @@ import com.kevdeto.ticketsystem.domain.mapper.BusinessMapper;
 import com.kevdeto.ticketsystem.domain.repository.BusinessRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class BusinessServiceImpl implements BusinessUseCase {
@@ -29,6 +30,7 @@ public class BusinessServiceImpl implements BusinessUseCase {
 	}
 
 	@Override
+	@Transactional
 	public BusinessResponseDTO create(BusinessRequestDTO dto) {
 		UserEntity user = userRepository.findById(dto.userId())
 				.orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
@@ -41,6 +43,7 @@ public class BusinessServiceImpl implements BusinessUseCase {
 	}
 
 	@Override
+	@Transactional
 	public BusinessResponseDTO update(Long id, BusinessRequestDTO dto) {
 		BusinessEntity entity = businessRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Negocio no encontrado"));
@@ -55,6 +58,7 @@ public class BusinessServiceImpl implements BusinessUseCase {
 	}
 
 	@Override
+	@Transactional
 	public void delete(Long id) {
 		if (!businessRepository.existsById(id)) {
 			throw new EntityNotFoundException("Negocio no encontrado");

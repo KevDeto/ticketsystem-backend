@@ -1,5 +1,7 @@
 package com.kevdeto.ticketsystem.domain.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,7 +26,7 @@ public class TicketItemEntity {
 	private Long id;
 
 	private Integer quantity;
-	private Double subtotal;
+	private BigDecimal subtotal;
 
 	@ManyToOne
 	@JoinColumn(name = "product_id")

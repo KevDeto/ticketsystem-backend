@@ -13,6 +13,7 @@ import com.kevdeto.ticketsystem.domain.repository.ProductRepository;
 import com.kevdeto.ticketsystem.domain.repository.TicketItemRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class TicketItemServiceImpl implements TicketItemUseCase {
@@ -28,6 +29,7 @@ public class TicketItemServiceImpl implements TicketItemUseCase {
 	}
 
 	@Override
+	@Transactional
 	public TicketItemResponseDTO update(Long id, TicketItemRequestDTO dto) {
 		TicketItemEntity entity = ticketItemRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Ítem de ticket no encontrado"));
@@ -42,6 +44,7 @@ public class TicketItemServiceImpl implements TicketItemUseCase {
 	}
 
 	@Override
+	@Transactional
 	public void delete(Long id) {
 		if (!ticketItemRepository.existsById(id)) {
 			throw new EntityNotFoundException("Ítem de ticket no encontrado");

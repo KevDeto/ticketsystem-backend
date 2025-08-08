@@ -1,5 +1,6 @@
 package com.kevdeto.ticketsystem.application.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import com.kevdeto.ticketsystem.domain.repository.ProductRepository;
 import com.kevdeto.ticketsystem.domain.repository.TicketRepository;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class TicketServiceImpl implements TicketUseCase {
@@ -37,6 +39,7 @@ public class TicketServiceImpl implements TicketUseCase {
 	}
 
 	@Override
+	@Transactional
 	public TicketResponseDTO create(TicketRequestDTO dto) {
 		BusinessEntity business = businessRepository.findById(dto.businessId())
 				.orElseThrow(() -> new EntityNotFoundException("Negocio no encontrado"));
@@ -46,7 +49,7 @@ public class TicketServiceImpl implements TicketUseCase {
 		ticket.setBusiness(business);
 
 		List<TicketItemEntity> items = buildItemsAndCalculateTotal(ticket, dto.items());
-		double total = items.stream().mapToDouble(TicketItemEntity::getSubtotal).sum();
+		BigDecimal total = items.stream().map(TicketItemEntity::getSubtotal).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		ticket.setItems(items);
 		ticket.setTotal(total);
@@ -56,6 +59,7 @@ public class TicketServiceImpl implements TicketUseCase {
 	}
 
 	@Override
+	@Transactional
 	public void delete(Long id) {
 		if (!ticketRepository.existsById(id)) {
 			throw new EntityNotFoundException("Ticket no encontrado");
@@ -87,7 +91,8 @@ public class TicketServiceImpl implements TicketUseCase {
 			item.setProduct(product);
 			item.setQuantity(itemDTO.quantity());
 
-			double subtotal = product.getPrice() * itemDTO.quantity();
+			BigDecimal price = new BigDecimal(product.getPrice());
+			BigDecimal subtotal = price.multiply(new BigDecimal(itemDTO.quantity()));
 			item.setSubtotal(subtotal);
 			item.setTicket(ticket); // relacion inversa
 
