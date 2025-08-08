@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserUseCase {
 	}
 
 	@Override
+	@Transactional
 	public UserResponseDTO update(Long id, UserRequestDTO dto) {
 		UserEntity entity = userRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserUseCase {
 	}
 
 	@Override
+	@Transactional
 	public void delete(Long id) {
 		if (!userRepository.existsById(id)) {
 			throw new EntityNotFoundException("Usuario no encontrado");
