@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kevdeto.ticketsystem.application.usecase.BusinessUseCase;
+import com.kevdeto.ticketsystem.application.usecase.ProductUseCase;
 import com.kevdeto.ticketsystem.domain.dto.request.BusinessRequestDTO;
 import com.kevdeto.ticketsystem.domain.dto.response.BusinessResponseDTO;
+import com.kevdeto.ticketsystem.domain.dto.response.PaginatedResponseDTO;
+import com.kevdeto.ticketsystem.domain.dto.response.ProductResponseDTO;
 import com.kevdeto.ticketsystem.domain.payload.MessageResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,9 +33,11 @@ import jakarta.validation.Valid;
 public class BusinessController {
 
 	private final BusinessUseCase businessUseCase;
+	private final ProductUseCase productUseCase;
 
-	public BusinessController(BusinessUseCase businessUseCase) {
+	public BusinessController(BusinessUseCase businessUseCase, ProductUseCase productUseCase) {
 		this.businessUseCase = businessUseCase;
+		this.productUseCase = productUseCase;
 	}
 
 	@Operation(summary = "Crear un nuevo negocio")
@@ -72,5 +78,14 @@ public class BusinessController {
 		businessUseCase.delete(id);
 		return ResponseEntity.ok(new MessageResponse("Negocio eliminado correctamente", null, 200,
 				LocalDateTime.now().toString(), null, "/api/businesses/" + id));
+	}
+
+	@Operation(summary = "Listar productos por negocio (paginado)")
+	@GetMapping("/{id}/products")
+	public ResponseEntity<MessageResponse> getProductsByBusinessId(@PathVariable Long id, @RequestParam int page,
+			@RequestParam int size) {
+		PaginatedResponseDTO<ProductResponseDTO> products = productUseCase.getByBusinessId(id, page, size);
+		return ResponseEntity.ok(new MessageResponse("Productos del negocio", products, 200,
+				LocalDateTime.now().toString(), null, "/api/business/" + id + "/products"));
 	}
 }
