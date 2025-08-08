@@ -13,6 +13,7 @@ import com.kevdeto.ticketsystem.domain.entity.TicketItemEntity;
 public interface TicketItemMapper {
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "ticket", ignore = true)
+	@Mapping(target = "subtotal", ignore = true)
 	@Mapping(target = "product", source = "productId")
 	TicketItemEntity toEntity(TicketItemRequestDTO dto);
 
@@ -21,6 +22,7 @@ public interface TicketItemMapper {
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "ticket", ignore = true)
+	@Mapping(target = "subtotal", ignore = true)
 	@Mapping(target = "product", source = "productId")
 	void updateEntityFromRequest(TicketItemRequestDTO dto, @MappingTarget TicketItemEntity entity);
 
