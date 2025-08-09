@@ -2,7 +2,7 @@ package com.kevdeto.ticketsystem.domain.entity;
 
 import java.util.List;
 
-import com.kevdeto.ticketsystem.auth.domain.UserEntity;
+import com.kevdeto.ticketsystem.auth.domain.model.UserEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

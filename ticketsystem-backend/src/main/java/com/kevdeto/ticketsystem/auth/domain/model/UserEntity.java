@@ -1,9 +1,12 @@
-package com.kevdeto.ticketsystem.auth.domain;
+package com.kevdeto.ticketsystem.auth.domain.model;
 
+import com.kevdeto.ticketsystem.auth.domain.enums.UserRole;
 import com.kevdeto.ticketsystem.domain.entity.BusinessEntity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,6 +31,8 @@ public class UserEntity {
 	private String username;
 	private String email;
 	private String password;
+	@Enumerated(EnumType.STRING)
+	private UserRole role;
 
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
 	private BusinessEntity business;
