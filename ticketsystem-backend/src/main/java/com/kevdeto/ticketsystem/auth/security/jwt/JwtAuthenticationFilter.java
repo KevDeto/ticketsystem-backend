@@ -38,12 +38,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		final String jwt = authHeader.substring(7);
-		String username = jwtUtils.extractUsername(jwt);
+		String email = jwtUtils.extractEmail(jwt);
 
-		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+		if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+			UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-			if (jwtUtils.isTokenValid(jwt)) {
+			if (jwtUtils.isTokenValid(jwt, "access")) {
 	            String renewedToken = jwtUtils.renewTokenIfExpiringSoon(jwt);
 	            
 				UsernamePasswordAuthenticationToken authToken = 
