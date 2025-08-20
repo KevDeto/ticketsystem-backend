@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +41,7 @@ public class BusinessController {
 		this.productUseCase = productUseCase;
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Crear un nuevo negocio")
 	@PostMapping
 	public ResponseEntity<MessageResponse> create(@RequestBody @Valid BusinessRequestDTO dto) {
@@ -64,6 +66,7 @@ public class BusinessController {
 				LocalDateTime.now().toString(), null, "/api/businesses"));
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Actualizar un negocio por ID")
 	@PutMapping("/{id}")
 	public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid BusinessRequestDTO dto) {
@@ -72,6 +75,7 @@ public class BusinessController {
 				LocalDateTime.now().toString(), null, "/api/businesses/" + id));
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Eliminar un negocio por ID")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
@@ -80,6 +84,7 @@ public class BusinessController {
 				LocalDateTime.now().toString(), null, "/api/businesses/" + id));
 	}
 
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Listar productos por negocio (paginado)")
 	@GetMapping("/{id}/products")
 	public ResponseEntity<MessageResponse> getProductsByBusinessId(@PathVariable Long id, @RequestParam int page,

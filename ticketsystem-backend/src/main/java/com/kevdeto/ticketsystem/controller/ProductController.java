@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,7 @@ public class ProductController {
     	this.productUseCase = productUseCase;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Crear un nuevo producto")
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid ProductRequestDTO dto) {
@@ -61,6 +63,7 @@ public class ProductController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar un producto por ID")
     @PutMapping("/{id}")
     public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid ProductRequestDTO dto) {
@@ -70,6 +73,7 @@ public class ProductController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar un producto por ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {

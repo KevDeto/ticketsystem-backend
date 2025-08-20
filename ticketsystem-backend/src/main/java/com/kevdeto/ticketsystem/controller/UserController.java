@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +35,7 @@ public class UserController {
         this.userUseCase = userUseCase;
     }
 
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Registrar un nuevo usuario")
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid UserRequestDTO dto) {
@@ -42,7 +44,8 @@ public class UserController {
                 new MessageResponse("Usuario creado correctamente", created, 201, LocalDateTime.now().toString(), null, "/api/users")
         );
     }
-
+    // un usuario debe consultar su propio perfil y un admin puede consultar cualquier perfil
+	@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Obtener un usuario por ID")
     @GetMapping("/{id}")
     public ResponseEntity<MessageResponse> getById(@PathVariable Long id) {
@@ -52,6 +55,7 @@ public class UserController {
         );
     }
 
+	@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Listar todos los usuarios")
     @GetMapping
     public ResponseEntity<MessageResponse> getAll() {
@@ -60,7 +64,7 @@ public class UserController {
                 new MessageResponse("Listado de usuarios", users, 200, LocalDateTime.now().toString(), null, "/api/users")
         );
     }
-
+	//un admin puede actualizar cualquiera pero un usuario debe actualizar su propio perfil
     @Operation(summary = "Actualizar un usuario")
     @PutMapping("/{id}")
     public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid UserRequestDTO dto) {
@@ -70,6 +74,7 @@ public class UserController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Eliminar un usuario")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {

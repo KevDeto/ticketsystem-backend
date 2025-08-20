@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +33,8 @@ public class TicketController {
     public TicketController(TicketUseCase ticketUseCase) {
         this.ticketUseCase = ticketUseCase;
     }
-
+    
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Crear un nuevo ticket con ítems")
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid TicketRequestDTO dto) {
@@ -42,6 +44,7 @@ public class TicketController {
         );
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "Obtener un ticket por ID")
     @GetMapping("/{id}")
     public ResponseEntity<MessageResponse> getById(@PathVariable Long id) {
@@ -51,6 +54,9 @@ public class TicketController {
         );
     }
 
+    // para comision: (listar tickets propios (falta implementar) si es user , todos si es admin)
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "Listar todos los tickets")
     @GetMapping
     public ResponseEntity<MessageResponse> getAll() {
@@ -60,6 +66,7 @@ public class TicketController {
         );
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @Operation(summary = "Eliminar un ticket por ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
