@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kevdeto.ticketsystem.application.usecase.UserUseCase;
+import com.kevdeto.ticketsystem.auth.domain.enums.UserRole;
 import com.kevdeto.ticketsystem.auth.domain.model.UserEntity;
 import com.kevdeto.ticketsystem.auth.domain.repository.UserRepository;
 import com.kevdeto.ticketsystem.domain.dto.request.UserRequestDTO;
@@ -29,6 +30,7 @@ public class UserServiceImpl implements UserUseCase {
 	@Transactional
 	public UserResponseDTO create(UserRequestDTO dto) {
 		UserEntity entity = userMapper.toEntity(dto);
+		entity.setRole(UserRole.USER);//provisorio?
 		// nota: en el futuro tengo que hashear el password en este metodo o por aca
 		UserEntity saved = userRepository.save(entity);
 		return userMapper.toResponse(saved);
