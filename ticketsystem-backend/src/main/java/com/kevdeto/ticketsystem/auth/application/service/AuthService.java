@@ -56,9 +56,9 @@ public class AuthService {
 
 			String email = request.getEmail();
 			String accessToken = jwtUtils.generateAccessToken(email);
-			createAndPersistRefreshToken(email, response);
+			String refreshToken = createAndPersistRefreshToken(email, response);
 			
-			return new AuthResponseDTO("Login successful", accessToken, null);
+			return new AuthResponseDTO("Login successful", accessToken, refreshToken);
 		} catch (Exception e) {
 			throw new BadCredentialsException("Invalid username or password", e);
 		}
@@ -88,6 +88,9 @@ public class AuthService {
 
 	public AuthResponseDTO refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
 	    Cookie[] cookies = request.getCookies();
+	    if (cookies == null || cookies.length == 0) {
+	        throw new RuntimeException("No cookies found in request");
+	    }
 	    String oldRefreshToken = Arrays.stream(cookies)
 	            .filter(c -> "refreshToken".equals(c.getName()))
 	            .findFirst()
@@ -97,7 +100,7 @@ public class AuthService {
 		if (!jwtUtils.isTokenValid(oldRefreshToken, "refresh")) {
 			throw new RuntimeException("Refresh token is invalid, has expired, or is not of the 'refresh' type.");
 		}
-		String email = jwtUtils.extractEmail(oldRefreshToken);
+		String email = jwtUtils.extractEmail(oldRefreshToken, true);
 		String oldJti = jwtUtils.extractJti(oldRefreshToken);
 
 		RefreshTokenEntity tokenEntity = refreshTokenRepository.findByJti(oldJti)
@@ -119,10 +122,10 @@ public class AuthService {
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)
-                .path("/auth/refresh")
+                .secure(false) //true en https
+                .path("/api/auth/refresh")
                 .maxAge((int) (jwtUtils.getRefreshTokenExpirationMillis()) / 1000)
-                .sameSite("Strict")//para dominios distintos utilizar: sameSite("None").secure(true)
+                .sameSite("Lax")//para dominios distintos utilizar: sameSite("None").secure(true)
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
@@ -152,7 +155,7 @@ public class AuthService {
         setRefreshTokenCookie(response, newRefreshToken);
     }
     
-    private void createAndPersistRefreshToken(String email, HttpServletResponse response) {
+    private String createAndPersistRefreshToken(String email, HttpServletResponse response) {
         String jti = UUID.randomUUID().toString();
         String refreshToken = jwtUtils.generateRefreshToken(email, jti);
 
@@ -164,5 +167,7 @@ public class AuthService {
         refreshTokenRepository.save(entity);
 
         setRefreshTokenCookie(response, refreshToken);
+        
+        return refreshToken;
     }
 }
