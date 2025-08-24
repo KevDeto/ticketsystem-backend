@@ -22,6 +22,8 @@ import lombok.Getter;
 public class JwtUtils {
 	@Value("${jwt.secret.key}")
 	private String secretKey;
+	@Value("${jwt.secret.key.refresh}")
+	private String refreshSecretKey;
 	@Value("${jwt.expiration.time}")
 	private long accessTokenExpirationMillis;
 	@Value("${jwt.refresh.expiration}")
@@ -50,7 +52,7 @@ public class JwtUtils {
 				.claim("token_type", tokenType)
 				.setIssuedAt(new Date())
 				.setExpiration(new Date(System.currentTimeMillis() + customExpirationMillis))
-				.signWith(signingKey, SignatureAlgorithm.HS256)
+				.signWith(signingKey, SignatureAlgorithm.HS512)
 				.compact();
 	}
 
@@ -71,7 +73,15 @@ public class JwtUtils {
 
 	public boolean isTokenValid(String token, String expectedTokenType) {
 		try {
-			Claims claims = extractAllClaims(token);
+			Claims claims;
+//			= extractAllClaims(token);
+			
+	        // Determinar qué clave usar basado en el tipo de token esperado
+	        if ("refresh".equals(expectedTokenType)) {
+	            claims = extractAllClaimsRefresh(token);  // Usar clave de refresh
+	        } else {
+	            claims = extractAllClaims(token);         // Usar clave de access
+	        }
 
 	        if (expectedTokenType != null && !expectedTokenType.equals(claims.get("token_type", String.class))) {
 	            return false;
@@ -84,23 +94,26 @@ public class JwtUtils {
 		}
 	}
 	
-    public String extractEmail(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String extractEmail(String token, boolean isRefreshToken) {
+        return extractClaim(token, Claims::getSubject, isRefreshToken);
     }
     
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    public Date extractExpiration(String token, boolean isRefreshToken) {
+        return extractClaim(token, Claims::getExpiration, isRefreshToken);
     }
     
-    public String extractTokenType(String token) {
-        return extractClaim(token, claims -> claims.get("token_type", String.class));
+    public String extractTokenType(String token, boolean isRefreshToken) {
+        return extractClaim(token, claims -> claims.get("token_type", String.class), isRefreshToken);
     }
     
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        Claims claims = extractAllClaims(token);
+//    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+//        Claims claims = extractAllClaims(token);
+//        return claimsResolver.apply(claims);
+//    }
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver, boolean isRefreshToken) {
+        Claims claims = isRefreshToken ? extractAllClaimsRefresh(token) : extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-    
     public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(signingKey)
@@ -109,9 +122,18 @@ public class JwtUtils {
                 .getBody();
     }
     
+    public Claims extractAllClaimsRefresh(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(signingKeyRefresh)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+    
     public String extractJti(String token) {
-        return ((JwtParser) Jwts.parserBuilder()
-                .setSigningKey(signingKeyRefresh))
+        return Jwts.parserBuilder()
+                .setSigningKey(signingKeyRefresh)
+                .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .get("jti", String.class);
@@ -121,5 +143,8 @@ public class JwtUtils {
     private void signingKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
+        
+        byte[] refreshKeyBytes = Decoders.BASE64.decode(refreshSecretKey);
+        this.signingKeyRefresh = Keys.hmacShaKeyFor(refreshKeyBytes);
     }
 }
