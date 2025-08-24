@@ -50,6 +50,7 @@ public class BusinessController {
 				created, 201, LocalDateTime.now().toString(), null, "/api/businesses"));
 	}
 
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@Operation(summary = "Obtener un negocio por ID")
 	@GetMapping("/{id}")
 	public ResponseEntity<MessageResponse> getById(@PathVariable Long id) {
@@ -58,6 +59,7 @@ public class BusinessController {
 				LocalDateTime.now().toString(), null, "/api/businesses/" + id));
 	}
 
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@Operation(summary = "Listar todos los negocios")
 	@GetMapping
 	public ResponseEntity<MessageResponse> getAll() {
@@ -84,7 +86,7 @@ public class BusinessController {
 				LocalDateTime.now().toString(), null, "/api/businesses/" + id));
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 	@Operation(summary = "Listar productos por negocio (paginado)")
 	@GetMapping("/{id}/products")
 	public ResponseEntity<MessageResponse> getProductsByBusinessId(@PathVariable Long id, @RequestParam int page,

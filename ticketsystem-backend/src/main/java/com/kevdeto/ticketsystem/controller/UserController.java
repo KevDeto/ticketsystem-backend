@@ -35,7 +35,7 @@ public class UserController {
         this.userUseCase = userUseCase;
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Registrar un nuevo usuario")
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid UserRequestDTO dto) {
@@ -65,6 +65,7 @@ public class UserController {
         );
     }
 	//un admin puede actualizar cualquiera pero un usuario debe actualizar su propio perfil
+	@PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Actualizar un usuario")
     @PutMapping("/{id}")
     public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid UserRequestDTO dto) {

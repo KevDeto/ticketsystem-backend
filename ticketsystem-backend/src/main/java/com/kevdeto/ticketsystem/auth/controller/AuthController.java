@@ -22,7 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("api/auth")
 public class AuthController {
 	private final AuthService authService;
 
@@ -30,21 +30,18 @@ public class AuthController {
 		this.authService = authService;
 	}
 
-//	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/login")
 	public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid AuthRequestDTO request,
 			HttpServletResponse response) {
 		return ResponseEntity.ok(authService.login(request, response));
 	}
 
-//	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/register")
 	public ResponseEntity<AuthResponseDTO> register(@RequestBody @Valid RegisterRequestDTO request,
 			HttpServletResponse response) {
 		return ResponseEntity.ok(authService.register(request, response));
 	}
 
-	@PreAuthorize("hasRole('USER')")
 	@PostMapping("/refresh")
 	public ResponseEntity<AuthResponseDTO> refreshAccessToken(HttpServletRequest request,
 			HttpServletResponse response) {
