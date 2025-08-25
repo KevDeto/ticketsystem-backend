@@ -6,7 +6,7 @@ import com.kevdeto.ticketsystem.domain.dto.request.UserRequestDTO;
 import com.kevdeto.ticketsystem.domain.dto.response.UserResponseDTO;
 
 public interface UserUseCase {
-	UserResponseDTO create(UserRequestDTO dto);
+//	UserResponseDTO create(UserRequestDTO dto);
 
 	UserResponseDTO update(Long id, UserRequestDTO dto);
 

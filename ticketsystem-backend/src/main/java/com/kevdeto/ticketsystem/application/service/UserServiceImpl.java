@@ -26,15 +26,15 @@ public class UserServiceImpl implements UserUseCase {
 		this.userMapper = userMapper;
 	}
 
-	@Override
-	@Transactional
-	public UserResponseDTO create(UserRequestDTO dto) {
-		UserEntity entity = userMapper.toEntity(dto);
-		entity.setRole(UserRole.USER);//provisorio?
-		// nota: en el futuro tengo que hashear el password en este metodo o por aca
-		UserEntity saved = userRepository.save(entity);
-		return userMapper.toResponse(saved);
-	}
+//	@Override
+//	@Transactional
+//	public UserResponseDTO create(UserRequestDTO dto) {
+//		UserEntity entity = userMapper.toEntity(dto);
+//		entity.setRole(UserRole.USER);//provisorio?
+//		// nota: en el futuro tengo que hashear el password en este metodo o por aca
+//		UserEntity saved = userRepository.save(entity);
+//		return userMapper.toResponse(saved);
+//	}
 
 	@Override
 	@Transactional
