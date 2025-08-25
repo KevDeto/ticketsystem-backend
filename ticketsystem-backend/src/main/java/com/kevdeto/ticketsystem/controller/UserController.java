@@ -29,23 +29,24 @@ import jakarta.validation.Valid;
 @Tag(name = "User", description = "Operaciones sobre usuarios")
 public class UserController {
 
-    private final UserUseCase userUseCase;
+	private final UserUseCase userUseCase;
 
-    public UserController(UserUseCase userUseCase) {
-        this.userUseCase = userUseCase;
-    }
+	public UserController(UserUseCase userUseCase) {
+		this.userUseCase = userUseCase;
+	}
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Registrar un nuevo usuario")
-    @PostMapping
-    public ResponseEntity<MessageResponse> create(@RequestBody @Valid UserRequestDTO dto) {
-        UserResponseDTO created = userUseCase.create(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                new MessageResponse("Usuario creado correctamente", created, 201, LocalDateTime.now().toString(), null, "/api/users")
-        );
-    }
-    // un usuario debe consultar su propio perfil y un admin puede consultar cualquier perfil
-	@PreAuthorize("hasRole('ADMIN')")
+//	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
+//	@Operation(summary = "Registrar un nuevo usuario")
+//	@PostMapping
+//	public ResponseEntity<MessageResponse> create(@RequestBody @Valid UserRequestDTO dto) {
+//		UserResponseDTO created = userUseCase.create(dto);
+//		return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Usuario creado correctamente",
+//				created, 201, LocalDateTime.now().toString(), null, "/api/users"));
+//	}
+
+	// un usuario debe consultar su propio perfil y un admin puede consultar
+	// cualquier perfil
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
     @Operation(summary = "Obtener un usuario por ID")
     @GetMapping("/{id}")
     public ResponseEntity<MessageResponse> getById(@PathVariable Long id) {
@@ -56,32 +57,31 @@ public class UserController {
     }
 
 	@PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Listar todos los usuarios")
-    @GetMapping
-    public ResponseEntity<MessageResponse> getAll() {
-        List<UserResponseDTO> users = userUseCase.getAll();
-        return ResponseEntity.ok(
-                new MessageResponse("Listado de usuarios", users, 200, LocalDateTime.now().toString(), null, "/api/users")
-        );
-    }
-	//un admin puede actualizar cualquiera pero un usuario debe actualizar su propio perfil
-	@PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Actualizar un usuario")
-    @PutMapping("/{id}")
-    public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid UserRequestDTO dto) {
-        UserResponseDTO updated = userUseCase.update(id, dto);
-        return ResponseEntity.ok(
-                new MessageResponse("Usuario actualizado correctamente", updated, 200, LocalDateTime.now().toString(), null, "/api/users/" + id)
-        );
-    }
+	@Operation(summary = "Listar todos los usuarios")
+	@GetMapping
+	public ResponseEntity<MessageResponse> getAll() {
+		List<UserResponseDTO> users = userUseCase.getAll();
+		return ResponseEntity.ok(new MessageResponse("Listado de usuarios", users, 200, LocalDateTime.now().toString(),
+				null, "/api/users"));
+	}
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Eliminar un usuario")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
-        userUseCase.delete(id);
-        return ResponseEntity.ok(
-                new MessageResponse("Usuario eliminado correctamente", null, 200, LocalDateTime.now().toString(), null, "/api/users/" + id)
-        );
-    }
+	// un admin puede actualizar cualquiera pero un usuario debe actualizar su
+	// propio perfil
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
+	@Operation(summary = "Actualizar un usuario")
+	@PutMapping("/{id}")
+	public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid UserRequestDTO dto) {
+		UserResponseDTO updated = userUseCase.update(id, dto);
+		return ResponseEntity.ok(new MessageResponse("Usuario actualizado correctamente", updated, 200,
+				LocalDateTime.now().toString(), null, "/api/users/" + id));
+	}
+
+	@PreAuthorize("hasRole('ADMIN')")
+	@Operation(summary = "Eliminar un usuario")
+	@DeleteMapping("/{id}")
+	public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
+		userUseCase.delete(id);
+		return ResponseEntity.ok(new MessageResponse("Usuario eliminado correctamente", null, 200,
+				LocalDateTime.now().toString(), null, "/api/users/" + id));
+	}
 }

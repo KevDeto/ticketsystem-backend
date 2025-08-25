@@ -35,7 +35,7 @@ public class ProductController {
     	this.productUseCase = productUseCase;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
     @Operation(summary = "Crear un nuevo producto")
     @PostMapping
     public ResponseEntity<MessageResponse> create(@RequestBody @Valid ProductRequestDTO dto) {
@@ -45,6 +45,7 @@ public class ProductController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
     @Operation(summary = "Obtener un producto por ID")
     @GetMapping("/{id}")
     public ResponseEntity<MessageResponse> getById(@PathVariable Long id) {
@@ -54,6 +55,7 @@ public class ProductController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
     @Operation(summary = "Listar todos los productos")
     @GetMapping
     public ResponseEntity<MessageResponse> getAll() {
@@ -63,7 +65,7 @@ public class ProductController {
         );
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
     @Operation(summary = "Actualizar un producto por ID")
     @PutMapping("/{id}")
     public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid ProductRequestDTO dto) {
@@ -73,7 +75,7 @@ public class ProductController {
         );
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
     @Operation(summary = "Eliminar un producto por ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {

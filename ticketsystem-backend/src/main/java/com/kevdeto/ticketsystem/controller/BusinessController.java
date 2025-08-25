@@ -41,7 +41,7 @@ public class BusinessController {
 		this.productUseCase = productUseCase;
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
 	@Operation(summary = "Crear un nuevo negocio")
 	@PostMapping
 	public ResponseEntity<MessageResponse> create(@RequestBody @Valid BusinessRequestDTO dto) {
@@ -50,7 +50,7 @@ public class BusinessController {
 				created, 201, LocalDateTime.now().toString(), null, "/api/businesses"));
 	}
 
-	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
 	@Operation(summary = "Obtener un negocio por ID")
 	@GetMapping("/{id}")
 	public ResponseEntity<MessageResponse> getById(@PathVariable Long id) {
@@ -59,7 +59,7 @@ public class BusinessController {
 				LocalDateTime.now().toString(), null, "/api/businesses/" + id));
 	}
 
-	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	@Operation(summary = "Listar todos los negocios")
 	@GetMapping
 	public ResponseEntity<MessageResponse> getAll() {
@@ -68,7 +68,7 @@ public class BusinessController {
 				LocalDateTime.now().toString(), null, "/api/businesses"));
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
 	@Operation(summary = "Actualizar un negocio por ID")
 	@PutMapping("/{id}")
 	public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid BusinessRequestDTO dto) {
@@ -86,7 +86,7 @@ public class BusinessController {
 				LocalDateTime.now().toString(), null, "/api/businesses/" + id));
 	}
 
-	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
 	@Operation(summary = "Listar productos por negocio (paginado)")
 	@GetMapping("/{id}/products")
 	public ResponseEntity<MessageResponse> getProductsByBusinessId(@PathVariable Long id, @RequestParam int page,

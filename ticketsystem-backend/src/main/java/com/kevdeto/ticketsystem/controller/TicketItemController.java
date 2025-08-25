@@ -33,7 +33,7 @@ public class TicketItemController {
 		this.ticketItemUseCase = ticketItemUseCase;
 	}
 
-	@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
 	@Operation(summary = "Obtener un ítem de ticket por ID")
 	@GetMapping("/{id}")
 	public ResponseEntity<MessageResponse> getById(@PathVariable Long id) {
@@ -42,7 +42,7 @@ public class TicketItemController {
 				null, "/api/ticket-items/" + id));
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
 	@Operation(summary = "Listar todos los ítems de tickets")
 	@GetMapping
 	public ResponseEntity<MessageResponse> getAll() {
@@ -51,7 +51,7 @@ public class TicketItemController {
 				LocalDateTime.now().toString(), null, "/api/ticket-items"));
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
 	@Operation(summary = "Actualizar un ítem de ticket")
 	@PutMapping("/{id}")
 	public ResponseEntity<MessageResponse> update(@PathVariable Long id, @RequestBody @Valid TicketItemRequestDTO dto) {
@@ -60,7 +60,7 @@ public class TicketItemController {
 				LocalDateTime.now().toString(), null, "/api/ticket-items/" + id));
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('OWNER')")
 	@Operation(summary = "Eliminar un ítem de ticket")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<MessageResponse> delete(@PathVariable Long id) {
